@@ -76,6 +76,18 @@ class RedisDev {
       })
     })
   }
+
+  type (key) {
+    return new Promise((resolve, reject) => {
+      this.client.type(key, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
 }
 
 module.exports = RedisDev
