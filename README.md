@@ -81,3 +81,16 @@ const res = await dev.clear()
  */
 const res = await dev.ttl(key)
 ```
+
+### type
+
+```js
+/**
+ * Get the type of data.
+ * 
+ * @param {string} key - key
+ * 
+ * @returns {Promise}
+ */
+const res = await dev.type(key)
+```
