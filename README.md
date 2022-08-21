@@ -37,6 +37,8 @@ const res = await dev.set('foo', 'bar', 60)
  * Get value by key.
  * 
  * @param {string} key - key
+ * @param {number} [start=undefined] - start index
+ * @param {number} [end=undefined] - end index
  * 
  * @returns {Promise}
  */
@@ -93,4 +95,17 @@ const res = await dev.ttl(key)
  * @returns {Promise}
  */
 const res = await dev.type(key)
+```
+
+### keys
+
+```js
+/**
+ * Get data by pattern.
+ * 
+ * @param {string} [pattern=*] - pattern
+ * 
+ * @returns {Promise}
+ */
+const res = await dev.keys('foo*')
 ```

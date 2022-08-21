@@ -1,4 +1,5 @@
 const redis = require('redis')
+const { isNumber } = require('./util')
 
 class RedisDev {
   constructor (port, host, password) {
@@ -29,15 +30,28 @@ class RedisDev {
     })
   }
 
-  get (key) {
+  get (key, start, end) {
     return new Promise((resolve, reject) => {
-      this.client.get(key, (err, data) => {
+      const cb = (err, data) => {
         if (err) {
           reject(err)
         } else {
           resolve(data)
         }
-      })
+      }
+      let method = null,
+          args = []
+
+      if (isNumber(start) && isNumber(end)) {
+        method = 'getrange'
+        args.push(key, start, end, cb)
+      } else {
+        method = 'get'
+        args.push(key, cb)
+      }
+
+
+      this.client[method](...args)
     })
   }
 
@@ -80,6 +94,18 @@ class RedisDev {
   type (key) {
     return new Promise((resolve, reject) => {
       this.client.type(key, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  keys (pattern = '*') {
+    return new Promise((resolve, reject) => {
+      this.client.keys(pattern, (err, data) => {
         if (err) {
           reject(err)
         } else {
