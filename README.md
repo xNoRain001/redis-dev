@@ -52,30 +52,34 @@ const ret1 = await dev.get('hash', 'bar') // output: { baz: 'baz' }
 const ret2 = await dev.get('hash', 'bar', 'bar') // output: 'baz'
 ```
 
-### remove
+### remove(or del)
 
 ```js
 /**
  * Remove data by key.
+ * alias: del(DEL)
  * 
  * @param {string} key - key
  * 
  * @returns {Promise}
  */
 const res = await dev.remove('foo')
+const ret = await dev.del('foo')
 ```
 
-### clear
+### clear(or flushall)
 
 ```js
 /**
  * Clear all data.
+ * alias: flushall(FLUSHALL)
  * 
  * @param {string} key - key
  * 
  * @returns {Promise}
  */
 const res = await dev.clear()
+const ret = await dev.flushall()
 ```
 
 ### ttl
@@ -121,7 +125,7 @@ const res = await dev.keys('*')
 
 ```js
 /**
- * 
+ * Set expiration time.
  * 
  * @param {string} key - key
  * @param {number} expiration - duration time

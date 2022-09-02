@@ -1,7 +1,7 @@
 const redis = require('redis')
+const alias = require('./alias')
 const getStrategies = require('./get-strategies')
 const setStrategies = require('./set-strategies')
-const { keys, isNumber, isPlainObject } = require('./utils')
 
 class RedisDev {
   constructor (port, host, password) {
@@ -90,5 +90,7 @@ class RedisDev {
     })
   }
 }
+
+alias(RedisDev.prototype)
 
 module.exports = RedisDev
