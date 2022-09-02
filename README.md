@@ -132,3 +132,27 @@ const res = await dev.keys('*')
  */
 const res = await dev.expire('foo', 60)
 ```
+
+### subscribe
+
+```js
+/**
+ * Subscribe channel.
+ * 
+ * @param {string} channel - channel
+ * @param {Function} cb - callback
+ */
+const res = await dev.subscribe('foo', message => console.log(message))
+```
+
+### publish
+
+```js
+/**
+ * Puslish message.
+ * 
+ * @param {string} channel - channel
+ * @param {Function} message - message
+ */
+const res = await dev.publisj('foo', 'Published message')
+```

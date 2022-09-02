@@ -1,15 +1,22 @@
 const alias = prototype => {
-  const map = {
+  const aliasMap = {
     del: 'remove',
     flushall: 'clear'
   }
 
-  const keys = Object.keys(map)
+  const aliasKeys = Object.keys(aliasMap)
 
-  for (let i = 0, l = keys.length; i < l; i++) {
-    const key = keys[i]
-    const value = map[key]
-    prototype[key] = prototype[key.toUpperCase()] = prototype[value]
+  for (let i = 0, l = aliasKeys.length; i < l; i++) {
+    const key = aliasKeys[i]
+    const value = aliasMap[key]
+    prototype[key] = prototype[value]
+  }
+
+  const methods = Object.getOwnPropertyNames(prototype).slice(1)
+
+  for (let i = 0, l = methods.length; i < l; i++) {
+    const method = methods[i]
+    prototype[method.toUpperCase()] = prototype[method]
   }
 }
 

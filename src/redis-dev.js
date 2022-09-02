@@ -8,6 +8,7 @@ class RedisDev {
     this.client = redis.createClient(port, host, {
       password
     })
+    this.subscribes = []
   }
 
   set (pattern, key, value) {
@@ -84,6 +85,42 @@ class RedisDev {
         if (err) {
           reject(err)
         } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  subscribe (channel, cb) {
+    return new Promise((resolve, reject) => {
+      this.client.subscribe(channel, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          this.subscribes.push({
+            channel,
+            cb
+          })
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  publish (channel, message) {
+    return new Promise((resolve, reject) => {
+      this.client.psubscribe(channel, message, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          const subscribes = this.subscribes.filter(sub => {
+            return sub.channel === channel
+          })
+
+          for (let i = 0, l = subscribes.length; i < l; i++) {
+            subscribes[i].cb(message)
+          }
+          
           resolve(data)
         }
       })
