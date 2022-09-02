@@ -114,5 +114,17 @@ const res = await dev.type(key)
  * 
  * @returns {Promise}
  */
-const res = await dev.keys('foo*')
+const res = await dev.keys('*')
+```
+
+### expire
+
+```js
+/**
+ * 
+ * 
+ * @param {string} key - key
+ * @param {number} expiration - duration time
+ */
+const res = await dev.expire('foo', 60)
 ```
