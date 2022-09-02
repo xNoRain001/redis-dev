@@ -21,13 +21,16 @@ const dev = new RedisDev(port, host, requirepass)
 /**
  * Set key and value.
  * 
+ * @param {string} pattern - pattern, now supported types are string and hash.
  * @param {string} key - key
  * @param {string} value - value
- * @param {number} expiration - lift cycle
  * 
  * @returns {Promise}
  */
-const res = await dev.set('foo', 'bar', 60)
+const res = await dev.set('string', 'foo', 'foo')
+const ret = await dev.set('hash', 'bar', {
+  baz: 'baz'
+})
 ```
 
 ### get
@@ -36,13 +39,17 @@ const res = await dev.set('foo', 'bar', 60)
 /**
  * Get value by key.
  * 
+ * @param {string} pattern - pattern
  * @param {string} key - key
- * @param {number} [start=undefined] - start index
- * @param {number} [end=undefined] - end index
+ * @param {number} [startOrField=undefined] - start index or field
+ * @param {number} [end=-1] - end index
  * 
  * @returns {Promise}
  */
-const res = await dev.get('foo')
+const res1 = await dev.get('string', 'foo') // output: 'foo'
+const res2 = await dev.get('string', 'foo', 1) // output: 'oo'
+const ret1 = await dev.get('hash', 'bar') // output: { baz: 'baz' }
+const ret2 = await dev.get('hash', 'bar', 'bar') // output: 'baz'
 ```
 
 ### remove

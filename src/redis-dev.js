@@ -1,5 +1,7 @@
 const redis = require('redis')
-const { isNumber } = require('./util')
+const getStrategies = require('./get-strategies')
+const setStrategies = require('./set-strategies')
+const { keys, isNumber, isPlainObject } = require('./utils')
 
 class RedisDev {
   constructor (port, host, password) {
@@ -7,57 +9,10 @@ class RedisDev {
       password
     })
   }
-  
-  set (key, value, expiration) {
+
+  expire (key, expiration) {
     return new Promise((resolve, reject) => {
-      if (expiration) {
-        this.client.setex(key, expiration, value, (err, data) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve(data)
-          }
-        })
-      } else {
-        this.client.set(key, value, (err, data) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve(data)
-          }
-        })
-      }
-    })
-  }
-
-  get (key, start, end) {
-    return new Promise((resolve, reject) => {
-      const cb = (err, data) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(data)
-        }
-      }
-      let method = null,
-          args = []
-
-      if (isNumber(start) && isNumber(end)) {
-        method = 'getrange'
-        args.push(key, start, end, cb)
-      } else {
-        method = 'get'
-        args.push(key, cb)
-      }
-
-
-      this.client[method](...args)
-    })
-  }
-
-  remove (key) {
-    return new Promise((resolve, reject) => {
-      this.client.del(key, (err, data) => {
+      this.client.expire(key, expiration, (err, data) => {
         if (err) {
           reject(err)
         } else {
@@ -106,6 +61,26 @@ class RedisDev {
   keys (pattern = '*') {
     return new Promise((resolve, reject) => {
       this.client.keys(pattern, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+  
+  set (pattern, key, value) {
+    return setStrategies[pattern](this.client, key, value)
+  }
+
+  get (pattern, key, startOrField, end = -1) {
+    return getStrategies[pattern](this.client, key, startOrField, end)
+  }
+
+  remove (key) {
+    return new Promise((resolve, reject) => {
+      this.client.del(key, (err, data) => {
         if (err) {
           reject(err)
         } else {
