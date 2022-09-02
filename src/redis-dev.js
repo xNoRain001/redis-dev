@@ -2,6 +2,7 @@ const redis = require('redis')
 const alias = require('./alias')
 const getStrategies = require('./get-strategies')
 const setStrategies = require('./set-strategies')
+const delStrategies = require('./del-strategies')
 
 class RedisDev {
   constructor (port, host, password) {
@@ -11,15 +12,55 @@ class RedisDev {
     this.subscribes = []
   }
 
-  set (pattern, key, value) {
-    return setStrategies[pattern](this.client, key, value)
+  _set (pattern, key, fieldOrEntriesOrValue, value) {
+    return setStrategies[pattern](this, key, fieldOrEntriesOrValue, value)
   }
 
-  get (pattern, key, startOrField, end = -1) {
-    return getStrategies[pattern](this.client, key, startOrField, end)
+  _get (pattern, key, startOrField, end = -1) {
+    return getStrategies[pattern](this, key, startOrField, end)
   }
 
-  remove (key) {
+  _del (pattern, key, field) {
+    return delStrategies[pattern](this, key, field)
+  }
+
+  set (key, value) {
+    return new Promise((resolve, reject) => {
+      this.client.set(key, value, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  get (key) {
+    return new Promise((resolve, reject) => {
+      this.client.get(key, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  getrange (key, start, end = -1) {
+    return new Promise((resolve, reject) => {
+      this.client.getrange(key, start, end, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  del (key) {
     return new Promise((resolve, reject) => {
       this.client.del(key, (err, data) => {
         if (err) {
@@ -31,7 +72,67 @@ class RedisDev {
     })
   }
 
-  clear () {
+  hset (key, field, value) {
+    return new Promise((resolve, reject) => {
+      this.client.hset(key, field, value, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  hget (key, field) {
+    return new Promise((resolve, reject) => {
+      this.client.hget(key, field, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  hmget (key, ...fields) {
+    return new Promise((resolve, reject) => {
+      this.client.hmget(key, ...fields, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  hgetall (key) {
+    return new Promise((resolve, reject) => {
+      this.client.hgetall(key, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  hdel (key, field) {
+    return new Promise(async (resolve, reject) => {
+      this.client.hdel(key, field, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  flushall () {
     return new Promise((resolve, reject) => {
       this.client.flushall((err, data) => {
         if (err) {
